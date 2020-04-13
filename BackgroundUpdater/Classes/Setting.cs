@@ -53,6 +53,8 @@ namespace BackgroundUpdater.Classes
         public string APIKey { get; set; }
 
         public List<string> Favorites { get; set; }  =new List<string>();
+
+        public bool DarkMode { get; set; } = false;
         #endregion
 
         [JsonIgnore]
@@ -82,6 +84,7 @@ namespace BackgroundUpdater.Classes
                 this.LastWallpaperIdentity = json.LastWallpaperIdentity;
                 this.APIKey = json.APIKey;
                 this.Favorites = json.Favorites;
+                this.DarkMode = json.DarkMode;
             }
         }
 

@@ -12,7 +12,7 @@
         FontFamily="{materialDesign:MaterialDesignFont}"
         xmlns:vm="clr-namespace:BackgroundUpdater.ViewModels" xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        xmlns:local="clr-namespace:BackgroundUpdater"
+        xmlns:local="clr-namespace:BackgroundUpdater" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         Title="Main" Height="576" Width="844"   WindowState="{Binding CurWindowState, Mode=TwoWay}"  ResizeMode="NoResize"
         >
     <Window.DataContext>
@@ -21,12 +21,15 @@
     <WindowChrome.WindowChrome>
         <WindowChrome GlassFrameThickness="0,0,0,1" CornerRadius="0" />
     </WindowChrome.WindowChrome>
-
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding WindowLoaded}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
     <materialDesign:DialogHost Identifier="MainDialogHost">
         <Grid>
             <StackPanel>
                 <tb:TaskbarIcon
-PopupActivation="DoubleClick"
             Visibility="Visible"
              MenuActivation="LeftOrRightClick"
 IconSource="/Resources/61SDXtp8G4L.ico"
@@ -51,7 +54,6 @@ IconSource="/Resources/61SDXtp8G4L.ico"
   Margin="2,2,2,0">
                     <DockPanel>
 
-
                         <materialDesign:PopupBox
       DockPanel.Dock="Right"
       PlacementMode="BottomAndAlignRightEdges">
@@ -64,6 +66,12 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                                 </Button>
                             </StackPanel>
                         </materialDesign:PopupBox>
+                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" Margin="0,0,10,0">
+                            <TextBlock
+        VerticalAlignment="Center"
+        Margin="16 0 0 0"><Run Text="Dark mode"/></TextBlock>
+                            <ToggleButton Width="50" IsChecked="{Binding DarkMode, Mode=TwoWay}" Margin="10,0,0,0" />
+                        </StackPanel>
                         <StackPanel
       Orientation="Horizontal">
                             <Ellipse Width="26" Margin="10,0,0,0">

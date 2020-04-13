@@ -26,6 +26,9 @@ namespace BackgroundUpdater.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(str));
         }
 
+        private PaletteHelper paletteHelper = new PaletteHelper();
+        
+
         private int categoriesEnabled = 0;
         public int CategoriesEnabled
         {
@@ -146,19 +149,54 @@ namespace BackgroundUpdater.ViewModels
             }
         }
 
+        private bool darkMode = false;
+        public bool DarkMode
+        {
+            get => darkMode;
+            set
+            {
+                if (value != darkMode)
+                {
+                    darkMode = value;
+
+                    ITheme theme = paletteHelper.GetTheme();
+                    theme.SetBaseTheme(value ? Theme.Dark :Theme.Light);
+                    paletteHelper.SetTheme(theme);
+
+                    Classes.Setting.Instance.DarkMode = value;
+                    Classes.Setting.Instance.SaveSetting();
+                    NotifyPropertyChanged();
+                }
+            }
+        }
+
         private Classes.WallpaperManager wallpaper;
         private TaskScheduler uiContext = null;
 
         public MainViewModel()
         {
+        }
+
+        private ICommand windowLoaded;
+        public ICommand WindowLoaded
+        {
+            get
+            {
+                if (windowLoaded == null)
+                {
+                    windowLoaded = new RelayCommand<object>((obj) =>
+                    {
             LoadConfig();
+                    });
+                }
+
+                return windowLoaded;
+            }
         }
 
         private async void LoadConfig()
         {
-            string actual = Classes.WindowsAPI.GetBackgroud();
-            actualImagePath = actual;
-            ActualWallpaper = await Helpers.BitmapCreator.CreateBitmapAsync(actual);
+            StaticProps.SnackbarMessageQueue.Enqueue("Hello world!");
 
             await Classes.Setting.Instance.LoadSetting();
             Classes.Setting.Instance.IsWindowActif = true;
@@ -166,12 +204,14 @@ namespace BackgroundUpdater.ViewModels
             LaunchAtStartup = Classes.Setting.Instance.LaunchWindowsStarted;
             SortTypeSelected = Classes.Setting.Instance.SortType;
             DeleteOldWallpapers = Classes.Setting.Instance.DeleteOldWallaper;
+            DarkMode = Classes.Setting.Instance.DarkMode;
             ApiKey = Classes.Setting.Instance.APIKey;
 
-            await Task.Delay(TimeSpan.FromSeconds(2));
+            string actual = Classes.WindowsAPI.GetBackgroud();
+            actualImagePath = actual;
+            ActualWallpaper = await Helpers.BitmapCreator.CreateBitmapAsync(actual);
 
             await SearchCategories(true);
-            StaticProps.SnackbarMessageQueue.Enqueue("Hello world!");
 
             SetFavoritesListAsync();
         }
