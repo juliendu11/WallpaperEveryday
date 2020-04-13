@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Dialogs\" />
+    <Folder Include="Others\" />
   </ItemGroup>
 
 </Project>

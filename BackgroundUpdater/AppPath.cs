@@ -34,5 +34,17 @@ namespace BackgroundUpdater
                 return appWallpaperFolder;
             }
         }
+
+        private static readonly string appFavoritesFolder = appSavePath + "\\Favorites";
+        public static string AppFavoritesFolder
+        {
+            get
+            {
+                if (!Directory.Exists(appFavoritesFolder))
+                    Directory.CreateDirectory(appFavoritesFolder);
+
+                return appFavoritesFolder;
+            }
+        }
     }
 }

@@ -51,7 +51,12 @@ namespace BackgroundUpdater.Classes
         public WallpaperIdentity LastWallpaperIdentity { get; set; }
 
         public string APIKey { get; set; }
+
+        public List<string> Favorites { get; set; }  =new List<string>();
         #endregion
+
+        [JsonIgnore]
+        public bool IsWindowActif { get; set; }
 
         public async void SaveSetting()
         {
@@ -70,14 +75,13 @@ namespace BackgroundUpdater.Classes
                 var json = JsonConvert.DeserializeObject<BackgroundUpdater.Classes.Setting>(await File.ReadAllTextAsync(AppPath.AppSavePath + "\\setting.json"));
                 this.Launch = json.Launch;
                 this.LaunchWindowsStarted = json.LaunchWindowsStarted;
-                if (json.CategoriesActivate != null)
-                    this.CategoriesActivate = json.CategoriesActivate;
-
+                this.CategoriesActivate = json.CategoriesActivate;
                 this.LastChange = json.LastChange;
                 this.SortType = json.SortType;
                 this.DeleteOldWallaper = json.DeleteOldWallaper;
                 this.LastWallpaperIdentity = json.LastWallpaperIdentity;
                 this.APIKey = json.APIKey;
+                this.Favorites = json.Favorites;
             }
         }
 

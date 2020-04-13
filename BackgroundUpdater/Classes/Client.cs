@@ -4,95 +4,118 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
+using Serilog;
 
 namespace BackgroundUpdater.Classes
 {
     /// <summary>
     /// Handles requests to send to the API
     /// </summary>
-    public sealed class Client
+    public static class Client
     {
-        private static Client instance = null;
-        private static readonly object padlock = new object();
+        private static readonly HttpClient client = new HttpClient();
 
-        Client() { }
-
-        public static Client Instance
+        public static async Task<Classes.Response.WallpapersList> GetNewestWallpaper(int page, int infoLevel =1)
         {
-            get
+            try
             {
-                lock (padlock)
+                var getNewestWallpaper = await client.GetAsync(Helpers.UriCreator.GetNewestWallpaper(Setting.Instance.APIKey, page, infoLevel));
+                if (getNewestWallpaper.IsSuccessStatusCode)
                 {
-                    if (instance == null)
+                    string responseBody = await getNewestWallpaper.Content.ReadAsStringAsync();
+                    var json = JsonConvert.DeserializeObject<Classes.Response.WallpapersList>(responseBody);
+
+                    return json;
+                }
+                else
+                {
+                    return new Classes.Response.WallpapersList
                     {
-                        instance = new Client();
-                    }
-                    return instance;
+                        Success = false,
+                        Error = $"Bad status code: {getNewestWallpaper.StatusCode}",
+                        Wallpapers = null
+                    };
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "Error getting newest wallpaper with API, message: " + ex.Message);
+                return  new Classes.Response.WallpapersList
+                {
+                    Success = false,
+                    Error = "Error newest wallpaper with API, message: " + ex.Message,
+                    Wallpapers = null
+                };
+            }
+           
         }
 
-        private readonly HttpClient client = new HttpClient();
-
-        public string API_KEY { get; set; }
-
-        public async Task<Classes.Response.WallpapersList> GetNewestWallpaper(int page, int infoLevel =1)
+        public static async Task<Classes.Response.CategoriesList> GetCategoriesList()
         {
-            var getNewestWallpaper = await client.GetAsync(Helpers.UriCreator.GetNewestWallpaper(API_KEY, page, infoLevel));
-            if (getNewestWallpaper.IsSuccessStatusCode)
+            try
             {
-                string responseBody = await getNewestWallpaper.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<Classes.Response.WallpapersList>(responseBody);
+                var getCategoriesList = await client.GetAsync(Helpers.UriCreator.GetCategoriesList(Setting.Instance.APIKey));
+                if (getCategoriesList.IsSuccessStatusCode)
+                {
+                    string responseBody = await getCategoriesList.Content.ReadAsStringAsync();
+                    var json = JsonConvert.DeserializeObject<Classes.Response.CategoriesList>(responseBody);
 
-                return json;
+                    return json;
+                }
+                else
+                {
+                    return new Classes.Response.CategoriesList
+                    {
+                        Success = false,
+                        Error = $"Bad status code: {getCategoriesList.StatusCode}"
+                    };
+                }
             }
-            else
+            catch(Exception ex)
             {
-                return new Classes.Response.WallpapersList{ 
-                     Success = false, Error = $"Bad status code: {getNewestWallpaper.StatusCode}", Wallpapers =  null }
-                ;
-            }
-        }
-
-        public async Task<Classes.Response.CategoriesList> GetCategoriesList()
-        {
-            var getCategoriesList = await client.GetAsync(Helpers.UriCreator.GetCategoriesList(API_KEY));
-            if (getCategoriesList.IsSuccessStatusCode)
-            {
-                string responseBody = await getCategoriesList.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<Classes.Response.CategoriesList>(responseBody);
-
-                return json;
-            }
-            else
-            {
+                Log.Error(ex, "Error getting categories with API, message: " + ex.Message);
                 return new Classes.Response.CategoriesList
                 {
                     Success = false,
-                    Error = $"Bad status code: {getCategoriesList.StatusCode}"
+                    Error = "Error getting categories with API, message: " + ex.Message,
                 };
             }
+          
         }
 
-        public async Task<Classes.Response.WallpapersList> GetWallpapersByCategory(int categoryID, Enums.SortType sort)
+        public static async Task<Classes.Response.WallpapersList> GetWallpapersByCategory(int categoryID, Enums.SortType sort)
         {
-            var getWallpapersByCategory = await client.GetAsync(Helpers.UriCreator.GetWallpapersByCategory(API_KEY, categoryID, sort: sort));
-            if (getWallpapersByCategory.IsSuccessStatusCode)
+            try
             {
-                string responseBody = await getWallpapersByCategory.Content.ReadAsStringAsync();
-                var json = JsonConvert.DeserializeObject<Classes.Response.WallpapersList>(responseBody);
+                var getWallpapersByCategory = await client.GetAsync(Helpers.UriCreator.GetWallpapersByCategory(Setting.Instance.APIKey, categoryID, sort: sort));
+                if (getWallpapersByCategory.IsSuccessStatusCode)
+                {
+                    string responseBody = await getWallpapersByCategory.Content.ReadAsStringAsync();
+                    var json = JsonConvert.DeserializeObject<Classes.Response.WallpapersList>(responseBody);
 
-                return json;
+                    return json;
+                }
+                else
+                {
+                    return new Classes.Response.WallpapersList
+                    {
+                        Success = false,
+                        Error = $"Bad status code: {getWallpapersByCategory.StatusCode}"
+                    };
+                }
             }
-            else
+            catch (Exception ex)
             {
+                Log.Error(ex, "Error getting wallpaper with specific cateogry with API, message: " + ex.Message);
                 return new Classes.Response.WallpapersList
                 {
                     Success = false,
-                    Error = $"Bad status code: {getWallpapersByCategory.StatusCode}"
+                    Error = "Error getting wallpaper with specific cateogry with API, message: " + ex.Message,
                 };
             }
+            
         }
     }
 }

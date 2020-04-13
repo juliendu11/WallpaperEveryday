@@ -1,9 +1,12 @@
-﻿using Serilog;
+﻿using MaterialDesignThemes.Wpf;
+using Serilog;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace BackgroundUpdater.Classes
 {
@@ -56,9 +59,10 @@ namespace BackgroundUpdater.Classes
         {
             Log.Information("Day changed");
 
-            if (string.IsNullOrEmpty(Client.Instance.API_KEY))
+            if (string.IsNullOrEmpty(Setting.Instance.APIKey))
             {
                 Log.Information("No API Key");
+                StaticProps.SnackbarMessageQueue.Enqueue("No API Key");
                 return;
             }
 
@@ -75,9 +79,16 @@ namespace BackgroundUpdater.Classes
         {
             Log.Information("Launch change wallpaper process");
 
-            if (string.IsNullOrEmpty(Client.Instance.API_KEY))
+            StaticProps.SnackbarMessageQueue.Enqueue("Update wallpaper in progress");
+            StaticProps.ShowProgressBar = Visibility.Visible;
+
+
+            if (string.IsNullOrEmpty(Setting.Instance.APIKey))
             {
                 Log.Information("No API Key");
+                StaticProps.ShowProgressBar = Visibility.Hidden;
+
+                StaticProps.SnackbarMessageQueue.Enqueue("No API Key");
                 return;
             }
 
@@ -87,6 +98,10 @@ namespace BackgroundUpdater.Classes
         }
 
 
+        /// <summary>
+        /// Search wallpaper , select wallaper and save it on Setting.Instance.LastWallpaperIdentity
+        /// <see cref="Setting.Instance.LastWallpaperIdentity"/>
+        /// </summary>
         private async void SearchWallpaperAsync()
         {
             if (Classes.Setting.Instance.CategoriesActivate != null && Classes.Setting.Instance.CategoriesActivate.Count != 0)
@@ -97,15 +112,27 @@ namespace BackgroundUpdater.Classes
                 Log.Information("Sort: {SortType}", Setting.Instance.SortType);
 
                 int randomID = Helpers.RandomEngine.GetRandom<int>(Classes.Setting.Instance.CategoriesActivate);
-                var getWallpapers = await Classes.Client.Instance.GetWallpapersByCategory(randomID, Setting.Instance.SortType);
+                var getWallpapers = await Classes.Client.GetWallpapersByCategory(randomID, Setting.Instance.SortType);
                 if (!getWallpapers.Success)
                 {
                     Log.Error("Error getting wallpaper, message: {Message}", getWallpapers.Error);
+                    StaticProps.ShowProgressBar = Visibility.Hidden;
+
+                    if (Setting.Instance.IsWindowActif)
+                    {
+                        await DialogHost.Show(new Views.Dialogs.DialogMessage("Error getting wallpaper, message: " + getWallpapers.Error), dialogIdentifier: "MainDialogHost");
+                    }
                     return;
                 }
                 if (getWallpapers.Wallpapers ==null || getWallpapers.Wallpapers.Count == 0)
                 {
                     Log.Error("No wallpaper available");
+                    StaticProps.ShowProgressBar = Visibility.Hidden;
+
+                    if (Setting.Instance.IsWindowActif)
+                    {
+                        await DialogHost.Show(new Views.Dialogs.DialogMessage("No wallpaper available"), dialogIdentifier: "MainDialogHost");
+                    }
                     return;
                 }
                 var wallpaperUri = Helpers.RandomEngine.GetRandom<Classes.Response.Items.WallpaperItem>(getWallpapers.Wallpapers);
@@ -118,41 +145,81 @@ namespace BackgroundUpdater.Classes
 
                 using (var webClient = new WebClient())
                 {
-                    await webClient.DownloadFileTaskAsync(wallpaperUri.UrlImage, newWallpaperFile);
+                    try
+                    {
+                        await webClient.DownloadFileTaskAsync(wallpaperUri.UrlImage, newWallpaperFile);
+
+                    }
+                    catch (Exception ex) 
+                    {
+                        if (Setting.Instance.IsWindowActif)
+                        {
+                            await DialogHost.Show(new Views.Dialogs.DialogMessage("Error when download wallpaper, uri: " + wallpaperUri.UrlImage + Environment.NewLine + ex.Message), dialogIdentifier: "MainDialogHost");
+                        }
+                        Log.Error(ex, "Error when download wallpaper, uri: " + wallpaperUri.UrlImage);
+                    }
                 }
                 SetNewWallpaper(newWallpaperFile);
             }
             else
+            {
+                StaticProps.ShowProgressBar = Visibility.Hidden;
                 Log.Information("No activated categories are available");
+                if (Setting.Instance.IsWindowActif)
+                {
+                    if (DialogHost.CloseDialogCommand.CanExecute(null, null))
+                        DialogHost.CloseDialogCommand.Execute(null, null);
+                    await DialogHost.Show(new Views.Dialogs.DialogMessage("No activated categories are available"), dialogIdentifier: "MainDialogHost");
+                }
+            }
         }
 
+
+        /// <summary>
+        /// Use Windows API for set wallaper and delete other wallpaper if option is enabled
+        /// </summary>
+        /// <param name="newWallpaperFile">Path of new wallpaper</param>
         private async void SetNewWallpaper(string newWallpaperFile)
         {
-            await Task.Run(() =>
+            await Task.Run(async () =>
             {
                 Log.Information("Download complete");
 
                 if (!File.Exists(newWallpaperFile))
                 {
                     Log.Error("No file available");
+                    if (Setting.Instance.IsWindowActif)
+                    {
+                        await DialogHost.Show(new Views.Dialogs.DialogMessage("No file available for set in wallpaper"), dialogIdentifier: "MainDialogHost");
+                    }
+                    StaticProps.ShowProgressBar = Visibility.Hidden;
+
                     return;
                 }
 
                 if (Setting.Instance.DeleteOldWallaper)
                 {
-                    var oldFiles = Helpers.FastDirectoryEnumerator.GetFileList("*.jpg", AppPath.AppWallpaperFolder);
-                    if (oldFiles != null)
+                    try
                     {
-                        Parallel.ForEach(oldFiles, oldWallpaper => {
-                            if (File.Exists(oldWallpaper.FullName))
-                                File.Delete(oldWallpaper.FullName);
-                        });
+                        var oldFiles = Helpers.FastDirectoryEnumerator.GetFileList("*.jpg", AppPath.AppWallpaperFolder).ToList();
+                        if (oldFiles != null && oldFiles.Count != 0)
+                        {
+                            Parallel.ForEach(oldFiles, oldWallpaper => {
+                                if (oldWallpaper.FullName != newWallpaperFile)
+                                {
+                                    if (File.Exists(oldWallpaper.FullName))
+                                        File.Delete(oldWallpaper.FullName);
+                                }
+                            });
+                        }
                     }
+                    catch { }
                 }
                 
 
                 WindowsAPI.SetBackgroud(newWallpaperFile);
-
+                StaticProps.ShowProgressBar = Visibility.Hidden;
+                StaticProps.SnackbarMessageQueue.Enqueue("New wallpaper set!!");
             });
         }
 

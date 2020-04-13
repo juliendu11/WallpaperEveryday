@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Threading;
 
 namespace BackgroundUpdater.Classes
 {
@@ -54,6 +55,14 @@ namespace BackgroundUpdater.Classes
             {
                 StringBuilder s = new StringBuilder(fileName);
                 result = SystemParametersInfo(UAction.SPI_SETDESKWALLPAPER, 0, s, 0x2);
+
+                App.Current.Dispatcher.Invoke(async () =>
+                {
+                    var w = (Views.Main)App.Current.MainWindow;
+                    var data = (ViewModels.MainViewModel)w.DataContext;
+                    data.actualImagePath = fileName;
+                    data.ActualWallpaper = await Helpers.BitmapCreator.CreateBitmapAsync(fileName);
+                });
 
                 Log.Information("Wallpaper placement complete");
             }
