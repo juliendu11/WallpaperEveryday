@@ -55,6 +55,12 @@ namespace BackgroundUpdater.Classes
         public List<string> Favorites { get; set; }  =new List<string>();
 
         public bool DarkMode { get; set; } = false;
+
+        public int Height { get; set; } = 500;
+
+        public int Width { get; set; } = 500;
+
+        public Enums.OperatorType Operator { get; set; } = Enums.OperatorType.Equal;
         #endregion
 
         [JsonIgnore]
@@ -63,9 +69,9 @@ namespace BackgroundUpdater.Classes
         public async void SaveSetting()
         {
             if (this.LaunchWindowsStarted)
-                AddStartup("BackgroundUpdater", AppDomain.CurrentDomain.BaseDirectory + "\\BackgroundUpdater.exe");
+                AddStartup("WallpapersEveryday", AppDomain.CurrentDomain.BaseDirectory + "WallpapersEveryday.exe");
             else
-                RemoveStartup("BackgroundUpdater");
+                RemoveStartup("WallpapersEveryday");
             
             await File.WriteAllTextAsync(AppPath.AppSavePath + "/setting.json", JsonConvert.SerializeObject(this));
         }
@@ -85,6 +91,9 @@ namespace BackgroundUpdater.Classes
                 this.APIKey = json.APIKey;
                 this.Favorites = json.Favorites;
                 this.DarkMode = json.DarkMode;
+                this.Height = json.Height;
+                this.Width = json.Width;
+                this.Operator = json.Operator;
             }
         }
 
@@ -117,7 +126,7 @@ namespace BackgroundUpdater.Classes
             using (RegistryKey key = Registry.CurrentUser.OpenSubKey
                 ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
             {
-                key.SetValue(appName, "\"" + path + "\"");
+                key.SetValue(appName, "\"" + path + "\"" + " /StartMinimized");
             }
         }
 

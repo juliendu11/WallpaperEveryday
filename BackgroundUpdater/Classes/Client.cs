@@ -89,7 +89,7 @@ namespace BackgroundUpdater.Classes
         {
             try
             {
-                var getWallpapersByCategory = await client.GetAsync(Helpers.UriCreator.GetWallpapersByCategory(Setting.Instance.APIKey, categoryID, sort: sort));
+                var getWallpapersByCategory = await client.GetAsync(Helpers.UriCreator.GetWallpapersByCategory(Setting.Instance.APIKey, categoryID, sort: sort, width:Setting.Instance.Width, height:Setting.Instance.Height, @operator:Setting.Instance.Operator));
                 if (getWallpapersByCategory.IsSuccessStatusCode)
                 {
                     string responseBody = await getWallpapersByCategory.Content.ReadAsStringAsync();

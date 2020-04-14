@@ -13,7 +13,7 @@
         xmlns:vm="clr-namespace:BackgroundUpdater.ViewModels" xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
         xmlns:local="clr-namespace:BackgroundUpdater" xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-        Title="Main" Height="576" Width="844"   WindowState="{Binding CurWindowState, Mode=TwoWay}"  ResizeMode="NoResize"
+        Title="Main" Height="703" Width="941"   WindowState="{Binding CurWindowState, Mode=TwoWay}"  ResizeMode="NoResize"
         >
     <Window.DataContext>
         <vm:MainViewModel></vm:MainViewModel>
@@ -74,25 +74,20 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                         </StackPanel>
                         <StackPanel
       Orientation="Horizontal">
-                            <Ellipse Width="26" Margin="10,0,0,0">
-                                <Ellipse.Fill>
-                                    <ImageBrush ImageSource="/Resources/61SDXtp8G4L.png"/>
-                                </Ellipse.Fill>
 
-                            </Ellipse>
                             <TextBlock
         VerticalAlignment="Center"
         Margin="16 0 0 0" FontSize="16" FontWeight="Normal">
-      Wallpaper updater
+      Wallpapers Everyday
                             </TextBlock>
 
                         </StackPanel>
                     </DockPanel>
                 </materialDesign:ColorZone>
-                <Grid Height="486" Width="844">
+                <Grid Height="620" Width="935">
                     <materialDesign:Card
     materialDesign:ShadowAssist.ShadowDepth="Depth2"
-    Padding="20" Margin="10,10,532,5">
+    Padding="20" Margin="10,10,564,5">
                         <StackPanel>
                             <StackPanel Margin="5,0,5,20">
                                 <TextBox materialDesign:HintAssist.Hint="YourAPI Key" Height="29" Text="{Binding ApiKey, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"/>
@@ -128,11 +123,40 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                                 <Label Content="Delete old wallpapers" Width="198"/>
                                 <ToggleButton IsChecked="{Binding DeleteOldWallpapers, Mode=TwoWay}"/>
                             </DockPanel>
-                            <Button Margin="10,20,10,5" Command="{Binding ForceLoadNewWallpaper}" Content="Force load new wallpaper"/>
-                            <Separator Margin="10,5,10,5"></Separator>
+                            <Separator Margin="10" Height="2" Width="300"/>
+                            <DockPanel Margin="0,5,0,0" >
+                                <Label Content="Height" Width="170" Margin="0,0,10,0"/>
+                                <TextBox Text="{Binding Height,Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,0">
+                                <Label Content="Width" Width="170" Margin="0,0,10,0"/>
+                                <TextBox Text="{Binding Width,Mode=TwoWay, UpdateSourceTrigger=LostFocus}"></TextBox>
+                            </DockPanel>
+                            <DockPanel Margin="0,10,0,10">
+                                <Label Content="Size operator" Width="170" Margin="0,0,10,0"/>
+                                <ComboBox
+  materialDesign:HintAssist.Hint="Operator"
+  MinWidth="72"
+  Margin="0 0 0 0"
+  ItemsSource="{Binding OperatorType}"
+                            SelectedItem="{Binding SizeOperatorSelected, Mode=TwoWay}"
+   Width="74">
+
+                                    <ComboBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </ComboBox.ItemsPanel>
+                                </ComboBox>
+                            </DockPanel>
+                            <Button Margin="5" Style="{StaticResource MaterialDesignRaisedAccentButton}" Command="{Binding LoadDefaultSizeSetting}">
+                                Load default
+                            </Button>
+                            <Separator Margin="10" Height="2" Width="300"></Separator>
+                            <Button Margin="10,0,10,5" Command="{Binding ForceLoadNewWallpaper}" Content="Force load new wallpaper"/>
                             <Label Content="Actual wallpaper: " Margin="0,5,0,0"/>
                             <DockPanel Height="69">
-                                <Image Height="71" Width="134" DockPanel.Dock="Left" Source="{Binding ActualWallpaper}" Stretch="Uniform">
+                                <Image Height="71" Width="166" DockPanel.Dock="Left" Source="{Binding ActualWallpaper}" Stretch="Uniform">
                                     <Image.InputBindings>
                                         <MouseBinding MouseAction="LeftDoubleClick" Command="{Binding OpenActualWallpaper}"/>
                                     </Image.InputBindings>
@@ -143,7 +167,7 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                             </DockPanel>
                         </StackPanel>
                     </materialDesign:Card>
-                    <StackPanel Margin="317,10,0,5">
+                    <StackPanel Margin="376,10,0,5">
                         <StackPanel
   Orientation="Horizontal"
   Margin="4,10,4,4" HorizontalAlignment="Center">
@@ -160,14 +184,14 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                         </StackPanel>
                         <materialDesign:Card Visibility="{Binding CategoriesTab}"
                 materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                Padding="20" Margin="0,10,10,5" Width="517" Height="405">
+                Padding="20" Margin="0,10,5,5" Width="532" Height="538">
                             <StackPanel>
                                 <DockPanel>
                                     <Label Content="Number of activated categories:" VerticalContentAlignment="Center"/>
                                     <Label Content="{Binding CategoriesEnabled}" VerticalContentAlignment="Center" Margin="5,0,0,0" Width="145"/>
                                     <Button DockPanel.Dock="Right" Width="112" Command="{Binding DisableAllCategory}" Content="Disable all"/>
                                 </DockPanel>
-                                <ListBox ItemsSource="{Binding CategoryModels}" Height="322" Margin="0,10,0,0">
+                                <ListBox ItemsSource="{Binding CategoryModels}" Height="456" Margin="0,10,0,0">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel HorizontalAlignment="Center"/>
@@ -177,7 +201,7 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                                         <DataTemplate>
                                             <materialDesign:Card Height="106"
     materialDesign:ShadowAssist.ShadowDepth="Depth4"
-    Padding="32" Width="118">
+    Padding="32" Width="130">
                                                 <StackPanel>
                                                     <TextBlock FontSize="12" Text="{Binding Name}" HorizontalAlignment="Center"/>
                                                     <ToggleButton IsChecked="{Binding Activate}" Command="{Binding DataContext.CategoryCheckedChanged, RelativeSource={RelativeSource AncestorType={x:Type Window}, AncestorLevel=1}}" CommandParameter="{Binding}" Margin="0,10,0,0"/>
@@ -191,9 +215,9 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                         <materialDesign:Card Visibility="{Binding FavoritesTab}"
                         
                 materialDesign:ShadowAssist.ShadowDepth="Depth2"
-                Padding="20" Margin="0,10,10,5" Width="517" Height="405">
+                Padding="20" Margin="0,10,5,5" Width="532" Height="538">
                             <StackPanel>
-                                <ListBox ItemsSource="{Binding FavoriteModels, IsAsync=True}" Height="322" Margin="0,10,0,0">
+                                <ListBox ItemsSource="{Binding FavoriteModels, IsAsync=True}" Height="456" Margin="0,10,0,0">
                                     <ListBox.ItemsPanel>
                                         <ItemsPanelTemplate>
                                             <WrapPanel Orientation="Horizontal" Height="855" Width="484"/>
@@ -233,8 +257,8 @@ IconSource="/Resources/61SDXtp8G4L.ico"
                 <ProgressBar Height="6" Visibility="{Binding Path=(local:StaticProps.ShowProgressBar)}"
                 IsIndeterminate="True" Margin="5,0,5,0"  />
             </StackPanel>
-            <materialDesign:Snackbar IsActive="True"
-  MessageQueue="{Binding Path=(local:StaticProps.SnackbarMessageQueue)}" Margin="0,515,0,0" VerticalAlignment="Stretch" >
+            <materialDesign:Snackbar MessageQueue="{Binding Path=(local:StaticProps.SnackbarMessageQueue)}"
+   Margin="0,607,0,0" VerticalAlignment="Stretch" >
             </materialDesign:Snackbar>
         </Grid>
     </materialDesign:DialogHost>

@@ -94,6 +94,14 @@ namespace BackgroundUpdater.ViewModels
             }
         }
 
+        public IEnumerable<Enums.OperatorType> OperatorType
+        {
+            get
+            {
+                return Enum.GetValues(typeof(Enums.OperatorType)).Cast<Enums.OperatorType>();
+            }
+        }
+
         public string actualImagePath { get; set; }
         private BitmapImage actualWallpaper;
         /// <summary>
@@ -198,7 +206,7 @@ namespace BackgroundUpdater.ViewModels
         {
             StaticProps.SnackbarMessageQueue.Enqueue("Hello world!");
 
-            await Classes.Setting.Instance.LoadSetting();
+            
             Classes.Setting.Instance.IsWindowActif = true;
 
             LaunchAtStartup = Classes.Setting.Instance.LaunchWindowsStarted;
@@ -206,6 +214,15 @@ namespace BackgroundUpdater.ViewModels
             DeleteOldWallpapers = Classes.Setting.Instance.DeleteOldWallaper;
             DarkMode = Classes.Setting.Instance.DarkMode;
             ApiKey = Classes.Setting.Instance.APIKey;
+            Width = Classes.Setting.Instance.Width;
+            Height = Classes.Setting.Instance.Height;
+            SizeOperatorSelected = Classes.Setting.Instance.Operator;
+
+            if(Height ==500 && Width == 500)
+            {
+                if(LoadDefaultSizeSetting.CanExecute(null))
+                    LoadDefaultSizeSetting.Execute(null);
+            }
 
             string actual = Classes.WindowsAPI.GetBackgroud();
             actualImagePath = actual;
@@ -312,33 +329,7 @@ namespace BackgroundUpdater.ViewModels
             }
         }
 
-        private ICommand loadAPIKey;
-        public ICommand LoadAPIKey
-        {
-            get
-            {
-                if (loadAPIKey == null)
-                {
-                    loadAPIKey = new RelayCommand<object>(async (obj) =>
-                    {
-                        Classes.Setting.Instance.APIKey = ApiKey;
-                        Classes.Setting.Instance.SaveSetting();
-                        if (!string.IsNullOrEmpty(ApiKey))
-                        {
-                            await SearchCategories();
-                            if (wallpaper == null) wallpaper = new Classes.WallpaperManager();
-                            wallpaper.LaunchChangeWallpaper();
-                        }
-                        else
-                        {
-                            StaticProps.SnackbarMessageQueue.Enqueue("No API Key!");
-                        }
-                    });
-                }
-
-                return loadAPIKey;
-            }
-        }
+       
 
         private bool launchAtStartup;
         public bool LaunchAtStartup
@@ -385,6 +376,82 @@ namespace BackgroundUpdater.ViewModels
                     Classes.Setting.Instance.SortType = value;
                     Classes.Setting.Instance.SaveSetting();
                 }
+            }
+        }
+
+        private  int height;
+        public int Height
+        {
+            get => height;
+            set
+            {
+                if (value != height)
+                {
+                    height = value;
+                    NotifyPropertyChanged();
+                    Classes.Setting.Instance.Height = value;
+                    Classes.Setting.Instance.SaveSetting();
+                }
+            }
+        }
+
+        private int width;
+        public int Width
+        {
+            get => width;
+            set
+            {
+                if (value != width)
+                {
+                    width = value;
+                    NotifyPropertyChanged();
+                    Classes.Setting.Instance.Width = value;
+                    Classes.Setting.Instance.SaveSetting();
+                }
+            }
+        }
+
+        private Enums.OperatorType sizeOperatorSelected;
+        public Enums.OperatorType SizeOperatorSelected
+        {
+            get => sizeOperatorSelected;
+            set
+            {
+                if (value != sizeOperatorSelected)
+                {
+                    sizeOperatorSelected = value;
+                    NotifyPropertyChanged();
+                    Classes.Setting.Instance.Operator = value;
+                    Classes.Setting.Instance.SaveSetting();
+                }
+            }
+        }
+
+        private ICommand loadAPIKey;
+        public ICommand LoadAPIKey
+        {
+            get
+            {
+                if (loadAPIKey == null)
+                {
+                    loadAPIKey = new RelayCommand<object>(async (obj) =>
+                    {
+                        Classes.Setting.Instance.APIKey = ApiKey;
+                        Classes.Setting.Instance.SaveSetting();
+                        if (!string.IsNullOrEmpty(ApiKey))
+                        {
+                            await SearchCategories();
+                            if (wallpaper == null) wallpaper = new Classes.WallpaperManager();
+                            wallpaper.LaunchChangeWallpaper();
+                        }
+                        else
+                        {
+                            StaticProps.SnackbarMessageQueue.Enqueue("No API Key!");
+                        }
+                    });
+                }
+
+                return loadAPIKey;
             }
         }
 
@@ -611,10 +678,23 @@ namespace BackgroundUpdater.ViewModels
             }
         }
 
-        internal string doGetImageSourceFromResource(string psAssemblyName, string psResourceName)
+        private ICommand loadDefaultSizeSetting;
+        public ICommand LoadDefaultSizeSetting
         {
-            Uri oUri = new Uri("pack://application:,,,/" + psAssemblyName + ";component/" + psResourceName, UriKind.RelativeOrAbsolute);
-            return oUri.ToString();
+            get
+            {
+                if (loadDefaultSizeSetting == null)
+                {
+                    loadDefaultSizeSetting = new RelayCommand<object>((obj) =>
+                    {
+                        this.Height = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+                        this.Width = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+                        this.SizeOperatorSelected = Enums.OperatorType.Equal;
+                    });
+                }
+
+                return loadDefaultSizeSetting;
+            }
         }
 
         private ICommand editWindow;
