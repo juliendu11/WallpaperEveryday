@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace BackgroundUpdater.Helpers
+namespace WallpapersEveryday.Helpers
 {
     public class FastDirectoryEnumerator
     {

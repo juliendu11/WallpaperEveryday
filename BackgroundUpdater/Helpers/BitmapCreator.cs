@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Imaging;
 
-namespace BackgroundUpdater.Helpers
+namespace WallpapersEveryday.Helpers
 {
     public class BitmapCreator
     {

@@ -1,4 +1,5 @@
 ﻿using MaterialDesignThemes.Wpf;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,7 +16,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
-namespace BackgroundUpdater.ViewModels
+namespace WallpapersEveryday.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
@@ -226,6 +227,13 @@ namespace BackgroundUpdater.ViewModels
             string actual = Classes.WindowsAPI.GetBackgroud();
             actualImagePath = actual;
             ActualWallpaper = await Helpers.BitmapCreator.CreateBitmapAsync(actual);
+
+            //Check if we are connected to the internet, if we are not, we wait until we are connected
+            while (!Helpers.CheckInternetConnection.CheckForInternetConnection())
+            {
+                Log.Information("[LoadConfig]No internet connection");
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
 
             await SearchCategories(true);
         }
@@ -652,7 +660,7 @@ namespace BackgroundUpdater.ViewModels
                         string oldPath = obj.Path;
 
                         //To avoid exceptions
-                        //string newUri = doGetImageSourceFromResource("BackgroundUpdater", "61SDXtp8G4L.png");
+                        //string newUri = doGetImageSourceFromResource("WallpapersEveryday", "61SDXtp8G4L.png");
                         //ActualWallpaper = newUri;
                         //obj.Path = newUri;
 

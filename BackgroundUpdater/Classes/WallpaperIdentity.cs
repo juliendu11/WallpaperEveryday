@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BackgroundUpdater.Classes
+namespace WallpapersEveryday.Classes
 {
     public class WallpaperIdentity
     {

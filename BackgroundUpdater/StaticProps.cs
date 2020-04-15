@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Windows;
 
-namespace BackgroundUpdater
+namespace WallpapersEveryday
 {
     public static class StaticProps
     {

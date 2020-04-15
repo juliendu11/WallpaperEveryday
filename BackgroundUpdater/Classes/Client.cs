@@ -8,7 +8,7 @@ using MaterialDesignThemes.Wpf;
 using Newtonsoft.Json;
 using Serilog;
 
-namespace BackgroundUpdater.Classes
+namespace WallpapersEveryday.Classes
 {
     /// <summary>
     /// Handles requests to send to the API

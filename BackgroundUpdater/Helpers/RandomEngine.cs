@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace BackgroundUpdater.Helpers
+namespace WallpapersEveryday.Helpers
 {
     public static class RandomEngine
     {

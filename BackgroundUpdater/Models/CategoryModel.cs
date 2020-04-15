@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Text;
 
-namespace BackgroundUpdater.Models
+namespace WallpapersEveryday.Models
 {
     public class CategoryModel : INotifyPropertyChanged
     {

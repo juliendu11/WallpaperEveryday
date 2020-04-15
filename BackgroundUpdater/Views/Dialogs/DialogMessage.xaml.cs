@@ -11,7 +11,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace BackgroundUpdater.Views.Dialogs
+namespace WallpapersEveryday.Views.Dialogs
 {
     /// <summary>
     /// Logique d'interaction pour DialogMessage.xaml

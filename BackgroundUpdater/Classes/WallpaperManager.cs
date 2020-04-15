@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace BackgroundUpdater.Classes
+namespace WallpapersEveryday.Classes
 {
     /// <summary>
     /// Manages everything related to setting the wallpaper and managing the day change

@@ -4,14 +4,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 
-namespace BackgroundUpdater
+namespace WallpapersEveryday
 {
     /// <summary>
     /// Manage application paths, save files and backgrounds
     /// </summary>
     public class AppPath
     {
-        private static readonly string appSavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BackgroundUpdater";
+        private static readonly string appSavePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\WallpapersEveryday";
         public static string AppSavePath
         {
             get

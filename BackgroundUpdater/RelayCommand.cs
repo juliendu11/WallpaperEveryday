@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace BackgroundUpdater
+namespace WallpapersEveryday
 {
     public class RelayCommand<T> : ICommand
     {

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows.Media.Imaging;
 
-namespace BackgroundUpdater.Models
+namespace WallpapersEveryday.Models
 {
     public class FavoriteModel : INotifyPropertyChanged
     {

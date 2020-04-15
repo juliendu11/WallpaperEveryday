@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Threading;
 
-namespace BackgroundUpdater.Classes
+namespace WallpapersEveryday.Classes
 {
     /// <summary>
     /// Use windows API for set wallpaper

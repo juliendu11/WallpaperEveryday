@@ -1,10 +1,10 @@
-﻿using BackgroundUpdater.Classes.Response.Items;
+﻿using WallpapersEveryday.Classes.Response.Items;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace BackgroundUpdater.Classes.Response
+namespace WallpapersEveryday.Classes.Response
 {
     public class WallpapersList : Result
     {

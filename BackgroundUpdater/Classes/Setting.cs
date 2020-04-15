@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 
-namespace BackgroundUpdater.Classes
+namespace WallpapersEveryday.Classes
 {
     /// <summary>
     /// Manage application settings and manage backup of activated categories
@@ -80,7 +80,7 @@ namespace BackgroundUpdater.Classes
         {
             if (File.Exists(AppPath.AppSavePath + "\\setting.json"))
             {
-                var json = JsonConvert.DeserializeObject<BackgroundUpdater.Classes.Setting>(await File.ReadAllTextAsync(AppPath.AppSavePath + "\\setting.json"));
+                var json = JsonConvert.DeserializeObject<WallpapersEveryday.Classes.Setting>(await File.ReadAllTextAsync(AppPath.AppSavePath + "\\setting.json"));
                 this.Launch = json.Launch;
                 this.LaunchWindowsStarted = json.LaunchWindowsStarted;
                 this.CategoriesActivate = json.CategoriesActivate;
