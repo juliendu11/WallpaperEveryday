@@ -183,6 +183,7 @@ namespace BackgroundUpdater.ViewModels
 
         public MainViewModel()
         {
+            LoadConfig();
         }
 
         private ICommand windowLoaded;
@@ -194,7 +195,9 @@ namespace BackgroundUpdater.ViewModels
                 {
                     windowLoaded = new RelayCommand<object>((obj) =>
                     {
-            LoadConfig();
+                        StaticProps.SnackbarMessageQueue.Enqueue("Hello world!");
+                        Classes.Setting.Instance.IsWindowActif = true;
+                        SetFavoritesListAsync();
                     });
                 }
 
@@ -202,13 +205,9 @@ namespace BackgroundUpdater.ViewModels
             }
         }
 
+
         private async void LoadConfig()
         {
-            StaticProps.SnackbarMessageQueue.Enqueue("Hello world!");
-
-            
-            Classes.Setting.Instance.IsWindowActif = true;
-
             LaunchAtStartup = Classes.Setting.Instance.LaunchWindowsStarted;
             SortTypeSelected = Classes.Setting.Instance.SortType;
             DeleteOldWallpapers = Classes.Setting.Instance.DeleteOldWallaper;
@@ -229,8 +228,6 @@ namespace BackgroundUpdater.ViewModels
             ActualWallpaper = await Helpers.BitmapCreator.CreateBitmapAsync(actual);
 
             await SearchCategories(true);
-
-            SetFavoritesListAsync();
         }
 
         private async void SetFavoritesListAsync()
