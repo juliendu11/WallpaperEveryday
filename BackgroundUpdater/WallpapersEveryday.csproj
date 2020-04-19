@@ -5,6 +5,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UseWPF>true</UseWPF>
     <ApplicationIcon>Resources\61SDXtp8G4L.ico</ApplicationIcon>
+    <Version>1.0.0</Version>
+    <Authors>juliendu11</Authors>
+    <RepositoryUrl>https://github.com/juliendu11/WallpaperEveryday.git</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
