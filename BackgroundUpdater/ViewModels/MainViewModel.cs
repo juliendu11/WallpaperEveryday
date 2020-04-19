@@ -209,6 +209,8 @@ namespace WallpapersEveryday.ViewModels
 
         private async void LoadConfig()
         {
+            await Classes.Setting.Instance.LoadSetting();
+
             LaunchAtStartup = Classes.Setting.Instance.LaunchWindowsStarted;
             SortTypeSelected = Classes.Setting.Instance.SortType;
             DeleteOldWallpapers = Classes.Setting.Instance.DeleteOldWallaper;
@@ -235,7 +237,11 @@ namespace WallpapersEveryday.ViewModels
                 await Task.Delay(TimeSpan.FromSeconds(5));
             }
 
-            await SearchCategories(true);
+            if (!string.IsNullOrEmpty(ApiKey))
+            {
+                await SearchCategories(true);
+                if (wallpaper == null) wallpaper = new Classes.WallpaperManager();
+            }
         }
 
         private async void SetFavoritesListAsync()
